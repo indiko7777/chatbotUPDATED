@@ -42,10 +42,8 @@ def convert_to_lowercase_and_remove_punctuation(input_path, output_path):
     with open(input_path, 'r', encoding='utf-8') as file:
         content = file.read().lower()
 
-        # Split the content into lines
+        # Split the content into lines and process each line separately
         lines = content.split('\n')
-
-        # Process each line separately
         processed_lines = [remove_punctuation(line) for line in lines]
 
     with open(output_path, 'w', encoding='utf-8') as file:
@@ -72,8 +70,6 @@ def process_speeches(speeches_dir, cleaned_dir):
                 file.write('\n')
 
 
-
-
 def remove_punctuation(text):
     # Unicode character categories to keep (Letters, Numbers, Spaces)
     valid_categories = {'Ll', 'Lu', 'Lt', 'Lm', 'Lo', 'Nd', 'Zs'}
@@ -84,11 +80,10 @@ def remove_punctuation(text):
     # Replace other punctuation with spaces
     text = ''.join(' ' if char in string.punctuation else char for char in text)
 
-    # Remove diacritics (accents)
+    # Remove accents
     text = ''.join(char for char in unicodedata.normalize('NFD', text) if unicodedata.category(char) in valid_categories)
 
     return text
-
 
 def count_word_occurrences(text):
     word_counts = {}
@@ -129,7 +124,6 @@ def calculate_idf(cleaned_dir):
         idf_scores[word] = math.log10((total_documents + smoothing_factor) / (1 + document_count))
 
     return idf_scores
-
 
 def calculate_tfidf_matrix(cleaned_dir):
     idf_scores = calculate_idf(cleaned_dir)
@@ -229,8 +223,6 @@ def find_most_relevant_document(tfidf_matrix, question_vector, file_names):
             most_relevant_document = file_name
 
     return most_relevant_document
-
-import os
 
 def convert_cleaned_to_speeches(cleaned_file):
     if not cleaned_file.endswith('.txt'):
